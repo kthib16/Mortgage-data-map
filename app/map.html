@@ -4,7 +4,7 @@
 
 .counties {
   //fill: #EFEFEF;
-  fill: rgba(239,239,239,.5)
+  fill: rgba(239,239,239,.7)
 }
 
 .states {
@@ -14,9 +14,12 @@
 }
 
 </style>
+<body>
+  <div.percentage></div>
+</body>
 <script src="/app/d3.js"></script>
 <script src="/app/d3-scale-chromatic.js"></script>
-<script src="/app/topjson.js"></script>
+<script src="/app/topojson.js"></script>
 <svg width="960" height="600"></svg>
 
 <script>
@@ -30,11 +33,11 @@ var mortgages = d3.map();
 var path = d3.geoPath();
 
 var x = d3.scaleLinear()
-    .domain([0, 1])
+    .domain([0, .6])
     .rangeRound([600, 860]);
 
 var color = d3.scaleThreshold()
-    .domain(d3.range(0, .555))
+    .domain([0, .1, .2, .3, .4, .5])
     .range(d3.schemeBlues[9]);
 
 var g = svg.append("g")
@@ -69,7 +72,6 @@ g.call(d3.axisBottom(x)
     .tickValues(color.domain()))
   .select(".domain")
     .remove();
-
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
     .defer(d3.tsv, "map-data.txt", function(d) { mortgages.set(d.id, +d.rate); })

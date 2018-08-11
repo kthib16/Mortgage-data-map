@@ -207,6 +207,7 @@ var hashPoint = function(point) {
 // and last point {B,C}. For a line, the first and last point are always
 // considered junctions, even if the line is closed; this ensures that a closed
 // line is never rotated.
+//var topology =
 var join = function(topology) {
   var coordinates = topology.coordinates,
       lines = topology.lines,
