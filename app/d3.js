@@ -11524,6 +11524,7 @@ var json = type$1("application/json", function(xhr) {
   return JSON.parse(xhr.responseText);
 });
 
+
 var text = type$1("text/plain", function(xhr) {
   return xhr.responseText;
 });
@@ -16637,8 +16638,9 @@ function zoom() {
     }
   }
 
-  function dblclicked() {
-    if (!filter.apply(this, arguments)) return;
+  function dblclicked(x) {
+		console.log(x)
+		if (!filter.apply(this, arguments)) return;
     var t0 = this.__zoom,
         p0 = mouse(this),
         p1 = t0.invert(p0),

@@ -18,11 +18,11 @@
   <div.percentage></div>
 </body>
 <script src="/app/d3.js"></script>
-<script src="/app/d3-scale-chromatic.js"></script>
 <script src="/app/topojson.js"></script>
 <svg width="960" height="600"></svg>
 
 <script>
+
 
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
@@ -38,7 +38,8 @@ var x = d3.scaleLinear()
 
 var color = d3.scaleThreshold()
     .domain([0, .1, .2, .3, .4, .5])
-    .range(d3.schemeBlues[9]);
+    .range(['#feecd6','#fcd19c','#f9aa48','#f3833d','#ed5731','#e62323']);
+
 
 var g = svg.append("g")
     .attr("class", "key")
@@ -49,7 +50,7 @@ g.selectAll("rect")
       d = color.invertExtent(d);
       if (d[0] == null) d[0] = x.domain()[0];
       if (d[1] == null) d[1] = x.domain()[1];
-      return d;
+      return d
     }))
   .enter().append("rect")
     .attr("height", 8)
@@ -73,7 +74,7 @@ g.call(d3.axisBottom(x)
   .select(".domain")
     .remove();
 d3.queue()
-    .defer(d3.json, "https://d3js.org/us-10m.v1.json")
+    .defer(d3.json, "/app/map-shapes-no-ak-ha.json")
     .defer(d3.tsv, "map-data.txt", function(d) { mortgages.set(d.id, +d.rate); })
     .await(ready);
 
@@ -93,7 +94,11 @@ function ready(error, us) {
   svg.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("class", "states")
-      .attr("d", path);
+      .attr("d", path)
+
 }
+
+
+
 
 </script>
