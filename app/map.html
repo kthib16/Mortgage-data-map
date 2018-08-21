@@ -15,12 +15,13 @@
 
 </style>
 <body>
-  <div.percentage></div>
+
 </body>
 <script src="/app/d3.js"></script>
 <script src="/app/topojson.js"></script>
-<svg width="960" height="600"></svg>
-
+<div style="font-weight: 700; font-size: 1.2rem; margin-bottom: 10px;margin-left: 10%; margin-right: 10%; font-family: franklin-gothic-urw,helvetica,sans-serif">FHA and VA loans originated by nonbanks as a percentage of all mortgages, 2016</div>
+<svg style="display: block; margin-left: auto; margin-right: auto" width="960" height="600"></svg>
+<img style="display: block; float: right; margin-top: 2em; max-width: 90%; width: 13rem; margin-right: 10%; padding-right: 0.83em;"src="/app/BROOKINGS_WEB.png" />
 <script>
 
 
@@ -45,6 +46,18 @@ var g = svg.append("g")
     .attr("class", "key")
     .attr("transform", "translate(0,40)");
 
+var tooltip = d3.select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
+    .style("height", "100px")
+    .style("width", "100px")
+    .style("background-color", "#ffffff")
+    .style("padding", "0.5em")
+    .text("j");
+
+
 g.selectAll("rect")
   .data(color.range().map(function(d) {
       d = color.invertExtent(d);
@@ -57,6 +70,7 @@ g.selectAll("rect")
     .attr("x", function(d) { return x(d[0]); })
     .attr("width", function(d) { return x(d[1]) - x(d[0]); })
     .attr("fill", function(d) { return color(d[0]); });
+
 
 g.append("text")
     .attr("class", "caption")
@@ -83,6 +97,15 @@ function ready(error, us) {
 
   svg.append("g")
       .attr("class", "counties")
+      .on("mouseover", function(){
+          return tooltip.style("visibility", "visible")
+      })
+      .on("mousemove", function(){
+          return tooltip.style("top", (d3.event.pageY-10) + "px").style("left", (d3.event.pageX+10) + "px")
+      })
+      .on("mouseout", function(){
+          return tooltip.style("visibility", "hidden")
+      })
     .selectAll("path")
     .data(topojson.feature(us, us.objects.counties).features)
     .enter().append("path")
@@ -97,6 +120,15 @@ function ready(error, us) {
       .attr("d", path)
 
 }
+
+  /*.on("mouseover", function(){return tooltip.style("visibility", "visible"), tooltip.text("Percent of all mortgages:" + mortgages.get(d.rate));})
+  .on("mouseover", function(){console.log(mortgages.get(d.rate))})
+  .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+  .on("mouseout", function(){return tooltip.style("visibility", "hidden");});*/
+
+
+
+
 
 
 
