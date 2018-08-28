@@ -62,7 +62,7 @@ var findName = function(number){
 
 }
 
-d3.tsv("/app/data-county-names.txt", function(data){
+d3.tsv("/app/map-data.txt", function(data){
   data.forEach(function(x){
     if(x.rate !== NaN){
         x.rate = +x.rate;
@@ -118,8 +118,8 @@ g.call(d3.axisBottom(x)
     .remove();
 
 d3.queue()
-    .defer(d3.json, "/app/map-shapes-no-ak-ha.json")
-    .defer(d3.tsv, "/app/data-county-names.txt", function(d) {
+    .defer(d3.json, "/app/map-shapes.json")
+    .defer(d3.tsv, "/app/map-data.txt", function(d) {
       mortgages.set(d.id, +d.rate)
     })
     .await(ready);
