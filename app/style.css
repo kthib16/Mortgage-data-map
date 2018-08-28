@@ -1,10 +1,18 @@
+.hr{
+  weight: 1px;
+}
+
+.body{
+  font-family: franklin-gothic-urw,helvetica,sans-serif;
+}
+
 .title{
   font-weight: 700;
   font-size: 1.2rem;
   margin-bottom: 10px;
   margin-left: 10%;
   margin-right: 10%;
-  font-family: franklin-gothic-urw,helvetica,sans-serif
+  font-family: inherit;
 }
 
 .map{
@@ -21,4 +29,16 @@
   width: 13rem;
   margin-right: 10%;
   padding-right: 0.83em;
+}
+
+.tooltip{
+  position: absolute;
+  z-index: 10;
+  visibility: hidden;
+  height: 85px;
+  width: 100px;
+  background-color: #ffffff;
+  padding: 0.5em;
+  font-size: 0.65em;
+  line-height: .5;
 }

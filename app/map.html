@@ -17,9 +17,16 @@
 
 
 </style>
-<body>
+<body class="body">
   <div class="title">FHA and VA loans originated by nonbanks as a percentage of all mortgages, 2016</div>
   <svg class="map" width="960" height="600"></svg>
+  <div class="tooltip">
+      <hr />
+      <p><span style="font-weight: bold">County:</span></p>
+      <p style="margin-bottom: 20px"><span class="county-name"></span></p>
+      <p><span style="font-weight: bold;">% of all mortgages:</span></p>
+      <p class="percent"></p>
+  </div>
   <img class="logo" src="/app/BROOKINGS_WEB.png" />
 </body>
 <script src="/app/d3.js"></script>
@@ -43,22 +50,29 @@ var color = d3.scaleThreshold()
     .domain([0, .1, .2, .3, .4, .5])
     .range(['#feecd6','#fcd19c','#f9aa48','#f3833d','#ed5731','#e62323']);
 
-
 var g = svg.append("g")
     .attr("class", "key")
     .attr("transform", "translate(0,40)");
 
-var tooltip = d3.select("body")
-    .append("div")
-    .style("position", "absolute")
-    .style("z-index", "10")
-    .style("visibility", "hidden")
-    .style("height", "100px")
-    .style("width", "100px")
-    .style("background-color", "#ffffff")
-    .style("padding", "0.5em")
-    .text("j");
+var tooltip = d3.select(".tooltip");
+var countyNames = [];
+var countyRates = [];
 
+var findName = function(number){
+
+}
+
+d3.tsv("/app/data-county-names.txt", function(data){
+  data.forEach(function(x){
+    if(x.rate !== NaN){
+        x.rate = +x.rate;
+        x.name = x.name;
+        countyRates.push(x.rate);
+        countyNames.push(x.name);
+      }
+  });
+
+})
 
 g.selectAll("rect")
   .data(color.range().map(function(d) {
@@ -105,7 +119,9 @@ g.call(d3.axisBottom(x)
 
 d3.queue()
     .defer(d3.json, "/app/map-shapes-no-ak-ha.json")
-    .defer(d3.tsv, "map-data.txt", function(d) { mortgages.set(d.id, +d.rate); })
+    .defer(d3.tsv, "/app/data-county-names.txt", function(d) {
+      mortgages.set(d.id, +d.rate)
+    })
     .await(ready);
 
 function ready(error, us) {
@@ -117,10 +133,10 @@ function ready(error, us) {
     .selectAll("path")
     .data(topojson.feature(us, us.objects.counties).features)
     .enter().append("path")
+      .attr("rate", function(d) { return mortgages.get(d.id)})
       .attr("fill", function(d) { return color(d.rate = mortgages.get(d.id)); })
       .attr("d", path)
-    /*.append("title")
-      .text(function(d) { return d.rate + "%"; });*/
+
 
   svg.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
@@ -130,16 +146,25 @@ function ready(error, us) {
   d3.selectAll("path")
     .on("mouseover", function(d){
         var percent = d.rate
-            if(percent === undefined){
-              return tooltip.style("visibility", "hidden").text("")
+        var text = ""
+          if(percent === undefined){
+            return tooltip.style("visibility", "hidden")
+          }
+          else{
+            for(var i = 0; i < countyRates.length; i++){
+              if(countyRates[i] === percent){
+                d3.select(".county-name").text(countyNames[i])
+              }
             }
-            else{
-              return tooltip.style("visibility", "visible").text("Mortgages: " + percent + "%")
-            }
-    })
+
+            d3.select(".percent")
+              .text(percent.toFixed(2) + "%")
+            return tooltip.style("visibility", "visible")
+          }
+        })
 
     .on("mousemove", function(){
-      return tooltip.style("top", (d3.event.pageY-10) + "px").style("left", (d3.event.pageX+10) + "px")
+      return tooltip.style("top", (d3.event.pageY-10) + "px").style("left", (d3.event.pageX+20) + "px")
   })
     .on("mouseout", function(){
       return tooltip.style("visibility", "hidden")
